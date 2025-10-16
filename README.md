@@ -1,23 +1,60 @@
-# Machine-Vision-Python
-This is my repo to showcase demo of Machine Vision in python 
-Here are various mini modules and side modules
+# 🧠 Machine-Vision-Python
 
-Catalogue:: 
+This repository showcases a set of **Machine Vision** demo projects built using **Python**, **OpenCV**, and **MediaPipe**.  
+Each module demonstrates real-time computer vision and hand gesture recognition to control various system functions.
 
-1st pointer.py - this python program is used to control mouse virtually, 
-2nd virtual_painer.py - this python program is used to control mouse pointer to draw images in numpy sheet,
-3rd volume_control.py - this python program is used to control volume with hand gesture,
+---
 
-others are small sub module that are used to create following projects. etc......
+## 📘 Catalogue
 
-Here are required** tools, versions to support this programs,
+1. **pointer.py** — Control your mouse cursor virtually using hand gestures.  
+2. **virtual_painter.py** — Draw freely on a NumPy canvas with your hand acting as a brush.  
+3. **volume_control.py** — Adjust your system’s volume using simple hand movements.  
+4. **Other helper modules** — Contain smaller utilities and submodules supporting the above main programs.
 
-python minimum 8.0.0 or newer
-https://www.python.org/downloads/
+---
 
-Run commands in command prompt/Terminal........
-python package openCV
+## ⚙️ Requirements
+
+**Python:** 3.8.0 or newer  
+🔗 [Download Python](https://www.python.org/downloads/)
+
+Install the required libraries using:
+
+```bash
 pip install opencv-python
-
-python package mediaPipe
 pip install mediapipe
+
+🚀 Getting Started
+
+After installing dependencies, you can run any script using the command line:
+
+python filename.py
+
+
+Example:
+
+python pointer.py
+
+💡 Description
+
+These projects demonstrate the power of Machine Vision by combining OpenCV and MediaPipe to track hand movements and interpret them as commands.
+You can use this repository as a base to explore interactive gesture-controlled systems, virtual tools, and computer vision applications.
+
+🧩 Tech Stack
+
+Python
+
+OpenCV
+
+MediaPipe
+
+NumPy
+
+🧑‍💻 Author
+
+Harsh Vasava
+📍 Vadodara, India
+🔗 Portfolio
+
+🔗 LinkedIn
