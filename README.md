@@ -51,10 +51,5 @@ MediaPipe
 
 NumPy
 
-🧑‍💻 Author
+Author Harsh Vasava
 
-Harsh Vasava
-📍 Vadodara, India
-🔗 Portfolio
-
-🔗 LinkedIn
