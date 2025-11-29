@@ -7,10 +7,11 @@ import hand_tracking_mod as htm
 import autopy as ap
 import os
 import math
+import pyautogui   # Added for drag/drawing
 
 
 # Initialize camera and screen resolution
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 detector = htm.HandDetector(max_num_hands=1)
 wScr, hScr = autopy.screen.size()
 smoothtening = 7
@@ -25,6 +26,9 @@ frameR = 100  # Frame region to define the area for movement
 cTime = 0
 pTime = 0
 
+drawing = False   # This stores drag (drawing) state
+
+
 while True:
     # Step 1: Find Hand Landmarks
     success, img = cap.read()
@@ -33,49 +37,69 @@ while True:
 
     # Step 2: Get Tip of Middle Finger and Index Finger
     if len(lmList) != 0:
-        x1, y1 = lmList[8][1:]  # Index Finger Tip (x1, y1)
-        x2, y2 = lmList[12][1:]  # Middle Finger Tip (x2, y2)
-        print(x1, y1, x2, y2)
+        x1, y1 = lmList[8][1:]   # Index finger
+        x2, y2 = lmList[12][1:]  # Middle finger
 
     # Step 3: Check which fingers are up
     fingers = detector.fingersup()
 
-    # Step 4: Only Index Finger is up (moving mode)
+    # ----------------------------------------------------------
+    # 1 FINGER = MOVE MOUSE
+    # ----------------------------------------------------------
     if fingers[1] == 1 and fingers[2] == 0:
-        # Step 5: Convert Co-ordinates
-        x3 = np.interp(x1, (frameR, w - frameR), (0, wScr))
-        y3 = np.interp(y1, (frameR, h - frameR), (0, hScr))  # Corrected y-coordinate mapping
 
-        # Step 6: Smoothen Values (optional)
+        # If drawing was active → stop drawing
+        if drawing:
+            pyautogui.mouseUp()
+            drawing = False
+
+        # Convert coordinates
+        x3 = np.interp(x1, (frameR, w - frameR), (0, wScr))
+        y3 = np.interp(y1, (frameR, h - frameR), (0, hScr))
+
+        # Smooth movement
         clocx = plocx + (x3 - plocx) / smoothtening
         clocy = plocy + (y3 - plocy) / smoothtening
 
-        # Step 7: Move mouse
+        # FIXED: natural left-right movement
+        autopy.mouse.move(clocx, clocy)
+
         cv2.rectangle(img, (frameR, frameR), (w - frameR, h - frameR), (255, 0, 0), 2)
-        autopy.mouse.move(wScr - clocx, clocy)  # Move mouse with inverted x-axis for correct direction
-        cv2.circle(img, (x1, y1), 1, (0, 255, 0), 2)
+        cv2.circle(img, (x1, y1), 8, (0, 255, 0), -1)
+
         plocx, plocy = clocx, clocy
 
-    # Step 8: Both Index and Middle Fingers are up (clicking mode)
+    # ----------------------------------------------------------
+    # 2 FINGERS = DRAW / DRAG (Like MS Paint)
+    # ----------------------------------------------------------
     if fingers[1] == 1 and fingers[2] == 1:
-        # Step 9: Find distance between the fingers
-        length, img = detector.findDistance((x1, y1), (x2, y2), img)
-        print("Distance:", length)
 
-        # Step 10: Click if distance is small (simulating mouse click)
-        if length < 30:  # Adjust distance threshold for click detection
-            autopy.mouse.click()
-            
+        # Convert finger coordinates
+        x3 = np.interp(x1, (frameR, w - frameR), (0, wScr))
+        y3 = np.interp(y1, (frameR, h - frameR), (0, hScr))
 
+        clocx = plocx + (x3 - plocx) / smoothtening
+        clocy = plocy + (y3 - plocy) / smoothtening
 
+        # Start drawing (press left mouse)
+        if not drawing:
+            pyautogui.mouseDown()   # hold left button
+            drawing = True
 
-    # Calculate FPS
+        # FIXED: natural left-right movement
+        autopy.mouse.move(clocx, clocy)
+
+        plocx, plocy = clocx, clocy
+
+    # ----------------------------------------------------------
+
+    # FPS Counter
     cTime = time.time()
     fps = 1 / (cTime - pTime)
     pTime = cTime
 
-    # Display FPS
-    cv2.putText(img, str(int(fps)), (20, 70), cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+    cv2.putText(img, str(int(fps)), (20, 70),
+                cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 255), 2)
+
     cv2.imshow("Image", img)
     cv2.waitKey(1)
-
