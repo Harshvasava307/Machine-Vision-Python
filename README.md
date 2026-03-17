@@ -49,6 +49,7 @@ OpenCV
 
 MediaPipe
 
+will add setup.py Later
 NumPy
 
 Author Harsh Vasava
